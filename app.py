@@ -154,4 +154,6 @@ if st.button("Run Valuation Machine"):
 
 st.markdown("---")
 st.caption("Real Estate Machine+ v2.0")
+st.markdown("Developed and Optimized by **Osman**")
+
 
