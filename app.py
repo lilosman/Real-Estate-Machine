@@ -56,24 +56,21 @@ with col1:
 with col2:
     beds = st.number_input("Bedrooms", value=3)
     baths = st.number_input("Bathrooms", value=2.0)
-    # تعديل المسميات لتطابق طلب الموديل
+    # 
     yr_built = st.number_input("Year Built", value=1990)
     yr_renovated = st.number_input("Year Renovated (0 if never)", value=0)
     zip_code = st.number_input("Zip Code (Numeric)", value=98101)
 
-# --- 5. منطق التوقع (المصحح للأسماء) ---
 if st.button("Run Valuation Machine"):
     if not all([price_model, scaler, ohe_encoder]):
         st.error("Models not loaded properly.")
     else:
         try:
-            # حساب الميزات بناءً على الأسماء المطلوبة
             house_age = 2014 - yr_built
             is_renovated = 1 if yr_renovated > 0 else 0
             years_since_renovation = (2014 - yr_renovated) if is_renovated else house_age
             street_placeholder = 13.0 
 
-            # بناء DataFrame البيانات العددية بنفس أسماء الموديل
             numeric_cols = [
                 "bedrooms", "bathrooms", "sqft_living", "sqft_lot", 
                 "floors", "sqft_above", "sqft_basement", "house_age", 
@@ -100,8 +97,6 @@ if st.button("Run Valuation Machine"):
             X_combined = pd.concat([numeric_scaled_df, ohe_df], axis=1)
             X_combined['cluster'] = kmeans.predict(numeric_scaled)[0]
             
-            # --- الحل السحري لمشكلة الـ Index ---
-            # نجبر الكود يستخدم فقط الأعمدة اللي الموديل عارفها وبنفس الترتيب
             expected_order = price_model.feature_names_
             for col in expected_order:
                 if col not in X_combined.columns:
@@ -122,11 +117,9 @@ if st.button("Run Valuation Machine"):
             c1.metric("Predicted Price", price_f)
             c2.metric("Category", property_cat)
 
-           # --- 7. استشارة الذكاء الاصطناعي (النسخة الاحترافية للمناقشة) ---
             st.markdown("---")
             with st.spinner('Consulting AI Expert...'):
-                # الـ Prompt ده بيجبر الـ AI يحلل البيانات كحقائق ثابتة
-                # --- الـ Prompt "الخبير الجغرافي" ---
+                
                 prompt = f"""
             بصفتك خبير عقارات في ولاية واشنطن (King County)،  حلل هذه النتائج وقدم قرار بالشراء ام لا  بناءً على البيانات التالية:
             - المدينة: {city}
@@ -161,3 +154,4 @@ if st.button("Run Valuation Machine"):
 
 st.markdown("---")
 st.caption("Real Estate Machine+ v2.0")
+
